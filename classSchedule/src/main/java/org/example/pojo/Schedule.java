@@ -1,6 +1,6 @@
 package org.example.pojo;
 
-public class Class {
+public class Schedule {
     String id ;
     String name ;
     String point ;
