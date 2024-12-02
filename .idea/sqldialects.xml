@@ -2,6 +2,8 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/classSchedule/src/main/java/org/example/mapper/ScheduleMapper.java" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/classSchedule/src/main/java/org/example/mapper/TeacherMapper.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/classSchedule/src/main/java/org/example/mapper/UserMapper.java" dialect="GenericSQL" />
+    <file url="PROJECT" dialect="MySQL" />
   </component>
 </project>

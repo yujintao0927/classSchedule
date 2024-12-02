@@ -19,17 +19,17 @@ public class ScheduleController {
 
     @Autowired
     private ScheduleService scheduleService ;
-//
-//    @GetMapping("/inf")
-//    public Result<String> list(@RequestHeader(name = "Authorization") String token) {
-//        Map<String, Object> claim = null;
-//        try {
-//            claim = JwtUtils.parseToken(token);
-//            return Result.success("所有数据") ;
-//        } catch (Exception e) {
-//            return Result.error("未登录") ;
-//        }
-//    }
+
+    @GetMapping("/inf")
+    public Result<String> list(@RequestHeader(name = "Authorization") String token) {
+        Map<String, Object> claim = null;
+        try {
+            claim = JwtUtils.parseToken(token);
+            return Result.success("所有数据") ;
+        } catch (Exception e) {
+            return Result.error("未登录") ;
+        }
+    }
 
     @GetMapping("/addClass")
     public Result addClass(@RequestHeader(name = "Authorization") String token) {

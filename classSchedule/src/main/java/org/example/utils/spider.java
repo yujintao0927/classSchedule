@@ -25,6 +25,7 @@ public class spider {
         List<String> classId = new ArrayList<>();
         try {
             driver.get(url);
+            String text = driver.getPageSource() ;
 
             Thread.sleep(30000);
 
