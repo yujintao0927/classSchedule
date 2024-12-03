@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css"> <!-- 引入样式文件 -->
+    <title>用户登录</title>
+    <script>
+        async function login(event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${username}&password=${password}`
+            });
+
+            const result = await response.json();
+
+            if (result.code !== 0) { // 假设编码 0 表示成功
+                alert(result.message); // 显示错误信息
+            } else {
+                // 登录成功逻辑，例如：保存Token、跳转到主页
+                localStorage.setItem('token', result.data); // 假设返回的token在data字段
+                window.location.href = '/home'; // 假设登录成功后跳转到主页
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>呢喃课表 - 用户登录</h1>
+
+<form onsubmit="login(event)"> <!-- 使用自定义的登录函数 -->
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit" class="btn">登录</button> <!-- 登录按钮 -->
+</form>
+
+<p>没有账户？<a href="/register" class="btn">注册</a></p> <!-- 注册链接 -->
+</body>
+</html>

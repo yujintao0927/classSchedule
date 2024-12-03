@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <title>主页</title>
+</head>
+<body>
+<h1>呢喃课表</h1> <!-- 一级标题 -->
+<h2>亲爱的小蓝鲸，欢迎来到主页</h2> <!-- 二级标题 -->
+<p th:text="'当前用户: ' + ${username}"></p> <!-- 使用Thymeleaf显示动态内容 -->
+<a href="/login">登录</a>
+<a href="/register">注册</a>
+</body>
+</html>
