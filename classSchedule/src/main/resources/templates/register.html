@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>用户注册</title>
+    <script>
+        async function register(event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/user/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${username}&password=${password}`
+            });
+
+            const result = await response.json();
+
+            if (result.code !== 0) { // 假设编码 0 表示成功
+                alert(result.message); // 显示错误信息
+            } else {
+                // 注册成功逻辑，例如：跳转到主页或其他操作
+                window.location.href = '/home'; // 假设注册成功后跳转到主页
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>呢喃课表 - 用户注册</h1>
+
+<form onsubmit="register(event)"> <!-- 使用自定义的注册函数 -->
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit" class="btn">注册</button>
+</form>
+
+<p>已经有账户？<a href="/login" class="btn">登录</a></p>
+</body>
+</html>
