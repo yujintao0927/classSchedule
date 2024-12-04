@@ -39,7 +39,7 @@ public class ScheduleController {
             Map<String, Object> claim = JwtUtils.parseToken(token) ;
             String username = (String) claim.get("username");
 
-            List<String> list = spider.getClassInf() ;
+            List<String> list = spider.getInfo() ;
             scheduleService.addClass(username,list) ;
 
             return Result.success() ;
