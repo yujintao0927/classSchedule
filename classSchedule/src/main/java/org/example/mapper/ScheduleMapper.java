@@ -16,6 +16,6 @@ public interface ScheduleMapper {
     @Select("select classId from map_user_class WHERE username=#{username}")
     List<String> findClassId(String username);
 
-    @Select("select classId from class WHERE classId=#{classId}")
-    Schedule findClassById(String classId);
+    @Select("select * from class WHERE classId=#{classId}")
+    List<Schedule> findClassById(String classId);
 }

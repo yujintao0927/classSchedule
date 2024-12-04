@@ -31,8 +31,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<Schedule> showClass(List<String> classId) {
         List<Schedule> schedules = new ArrayList<>() ;
         for (int i = 0; i < classId.size(); i++) {
-            schedules.add(scheduleMapper.findClassById(classId.get(i))) ;
+            schedules.add(scheduleMapper.findClassById(classId.get(i)).get(0)) ;
         }
-        return List.of();
+        return schedules ;
     }
 }

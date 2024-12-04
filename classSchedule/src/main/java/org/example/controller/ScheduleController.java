@@ -21,17 +21,6 @@ public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService ;
 
-//    @GetMapping("/inf")
-//    public Result<String> list(@RequestHeader(name = "Authorization") String token) {
-//        Map<String, Object> claim = null;
-//        try {
-//            claim = JwtUtils.parseToken(token);
-//            return Result.success("所有数据") ;
-//        } catch (Exception e) {
-//            return Result.error("未登录") ;
-//        }
-//    }
-
     @GetMapping("/addClass")
     public Result addClass(@RequestHeader(name = "Authorization") String token) {
 
@@ -39,7 +28,7 @@ public class ScheduleController {
             Map<String, Object> claim = JwtUtils.parseToken(token) ;
             String username = (String) claim.get("username");
 
-            List<String> list = spider.getClassInf() ;
+            List<String> list = spider.getInfo() ;
             scheduleService.addClass(username,list) ;
 
             return Result.success() ;
@@ -57,6 +46,7 @@ public class ScheduleController {
             List<String> classIds = scheduleService.findClassId(username) ;
 
             List<Schedule> schedules = scheduleService.showClass(classIds) ;
+
             return Result.success(schedules) ;
         } catch (Exception e) {
             return Result.error("未登录") ;
