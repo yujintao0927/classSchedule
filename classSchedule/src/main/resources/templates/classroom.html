@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>教室课表</title>
+    <style>
+        .header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .week-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .date-nav {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .date-nav div {
+            flex: 1;
+            padding: 5px;
+        }
+        .time-slots {
+            width: 100px;
+            float: left;
+        }
+        .time-slot {
+            height: 100px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .schedule-grid {
+            margin-left: 100px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #eee;
+        }
+        .schedule-cell {
+            background: white;
+            height: 100px;
+            padding: 5px;
+            font-size: 12px;
+        }
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+        .class-item {
+            background: #f0f0ff;
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+        .back-btn {
+            padding: 5px 10px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="search-bar">
+            <button class="back-btn" onclick="history.back()">&lt; 返回</button>
+            <input type="text" id="classroom-search" class="search-input" placeholder="输入教室地点搜索（如：教学楼A101）">
+            <button onclick="searchClassroom()" class="btn">搜索</button>
+        </div>
+        <div class="week-nav">
+            <button onclick="prevWeek()">&lt;</button>
+            <span id="current-week">第1周</span>
+            <button onclick="nextWeek()">&gt;</button>
+        </div>
+        <div class="date-nav" id="date-nav">
+            <!-- 日期将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <div class="time-slots">
+        <div class="time-slot">第1节<br>08:00-08:50</div>
+        <div class="time-slot">第2节<br>09:00-09:50</div>
+        <div class="time-slot">第3节<br>10:10-11:00</div>
+        <div class="time-slot">第4节<br>11:10-12:00</div>
+        <div class="time-slot">第5节<br>14:00-14:50</div>
+        <div class="time-slot">第6节<br>15:00-15:50</div>
+        <div class="time-slot">第7节<br>16:10-17:00</div>
+        <div class="time-slot">第8节<br>17:10-18:00</div>
+        <div class="time-slot">第9节<br>18:30-19:20</div>
+        <div class="time-slot">第10节<br>19:30-20:20</div>
+        <div class="time-slot">第11节<br>20:30-21:20</div>
+    </div>
+
+    <div class="schedule-grid" id="schedule-grid">
+        <!-- 课表内容将通过JavaScript动态生成 -->
+    </div>
+
+    <div class="footer-nav">
+        <a href="/student" class="nav-btn">学生课表</a>
+        <a href="/teacher" class="nav-btn">教师课表</a>
+    </div>
+
+    <script>
+        // 检查登录状态
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('请先登录');
+            window.location.href = '/login';
+        }
+
+        let currentWeek = 1;
+        const TOTAL_WEEKS = 20;
+        const SEMESTER_START = new Date('2024-09-02'); // 第一周的周一
+        let currentClassroom = '';
+
+        function updateDateNav(weekOffset = 0) {
+            const startDate = new Date(SEMESTER_START);
+            startDate.setDate(startDate.getDate() + (weekOffset * 7));
+            
+            const dateNav = document.getElementById('date-nav');
+            dateNav.innerHTML = '';
+            
+            const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            days.forEach((day, index) => {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(currentDate.getDate() + index);
+                
+                const dateDiv = document.createElement('div');
+                dateDiv.innerHTML = `${day}<br>${currentDate.getMonth() + 1}/${currentDate.getDate()}`;
+                dateNav.appendChild(dateDiv);
+            });
+        }
+
+        function updateWeekDisplay() {
+            document.getElementById('current-week').textContent = `第${currentWeek}周`;
+        }
+
+        function prevWeek() {
+            if (currentWeek > 1) {
+                currentWeek--;
+                updateWeekDisplay();
+                updateDateNav((currentWeek - 1));
+                if (currentClassroom) {
+                    searchClassroom();
+                }
+            }
+        }
+
+        function nextWeek() {
+            if (currentWeek < TOTAL_WEEKS) {
+                currentWeek++;
+                updateWeekDisplay();
+                updateDateNav((currentWeek - 1));
+                if (currentClassroom) {
+                    searchClassroom();
+                }
+            }
+        }
+
+        async function searchClassroom() {
+            const classroom = document.getElementById('classroom-search').value;
+            if (!classroom) {
+                alert('请输入教室地点');
+                return;
+            }
+            currentClassroom = classroom;
+
+            try {
+                const response = await fetch(`/classroom/searchClassroom?classroom=${encodeURIComponent(classroom)}&week=${currentWeek}`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                const result = await response.json();
+                
+                if (result.code === 0) {
+                    displaySchedule(result.data ? [result.data] : []);
+                } else {
+                    alert(result.message || '查询课表失败');
+                }
+            } catch (error) {
+                console.error('查询课表失败:', error);
+                alert('查询课表失败，请重试');
+            }
+        }
+
+        function displaySchedule(schedules) {
+            const grid = document.getElementById('schedule-grid');
+            grid.innerHTML = '';
+            
+            // 创建11行7列的网格
+            for (let i = 0; i < 11; i++) {
+                for (let j = 0; j < 7; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'schedule-cell';
+                    
+                    // 查找当前时间段的课程
+                    const classesInSlot = schedules.filter(schedule => 
+                        schedule.week == currentWeek && 
+                        schedule.time == (i + 1) && 
+                        getDayIndex(schedule.day) == j
+                    );
+                    
+                    // 显示课程信息
+                    classesInSlot.forEach(schedule => {
+                        const classDiv = document.createElement('div');
+                        classDiv.className = 'class-item';
+                        classDiv.innerHTML = `
+                            ${schedule.className}<br>
+                            ${schedule.teacherName}
+                        `;
+                        cell.appendChild(classDiv);
+                    });
+                    
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function getDayIndex(day) {
+            const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            return days.indexOf(day);
+        }
+
+        // 初始化页面
+        updateDateNav();
+        updateWeekDisplay();
+
+        // 添加回车搜索功能
+        document.getElementById('classroom-search').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchClassroom();
+            }
+        });
+    </script>
+</body>
+</html>

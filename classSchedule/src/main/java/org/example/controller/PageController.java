@@ -20,4 +20,14 @@ public class PageController {
     public String student() {
         return "student";
     }
+
+    @GetMapping("/classroom")
+    public String classroom() {
+        return "classroom";
+    }
+
+    @GetMapping("/teacher")
+    public String teacher() {
+        return "teacher";
+    }
 } 
