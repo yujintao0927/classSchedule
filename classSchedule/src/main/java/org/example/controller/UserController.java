@@ -25,10 +25,10 @@ public class UserController {
 
         if(u == null) {
             userService.register(username,password) ;
+            return Result.success();
         } else {
             return Result.error("用户名已存在") ;
         }
-        return Result.success(u) ;
     }
 
     @PostMapping("/login")

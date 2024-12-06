@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>学生课表</title>
+</head>
+<body>
+    <h1>呢喃课表 - 学生页面</h1>
+    <div class="schedule-container">
+        <h2>我的课表</h2>
+        <div id="schedule-content">
+            <!-- 课表内容将通过JavaScript动态加载 -->
+        </div>
+        <button onclick="loadSchedule()" class="btn">加载课表</button>
+    </div>
+
+    <script>
+        // 检查登录状态
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('请先登录');
+            window.location.href = '/login';
+        }
+
+        async function loadSchedule() {
+            try {
+                const response = await fetch('/schedule/classShow', {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+                const result = await response.json();
+                
+                if (result.code === 0) {
+                    displaySchedule(result.data);
+                } else {
+                    alert(result.message || '加载课表失败');
+                }
+            } catch (error) {
+                console.error('加载课表失败:', error);
+                alert('加载课表失败，请重试');
+            }
+        }
+
+        function displaySchedule(schedules) {
+            const container = document.getElementById('schedule-content');
+            if (!schedules || schedules.length === 0) {
+                container.innerHTML = '<p>暂无课程</p>';
+                return;
+            }
+
+            let html = '<ul class="schedule-list">';
+            schedules.forEach(schedule => {
+                html += `
+                    <li class="schedule-item">
+                        <h3>${schedule.className || '未知课程'}</h3>
+                        <p>教师：${schedule.teacherName || '未知'}</p>
+                        <p>教室：${schedule.classroom || '未知'}</p>
+                        <p>时间：第${schedule.week || '?'}周 ${schedule.day || '?'} 第${schedule.time || '?'}节</p>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

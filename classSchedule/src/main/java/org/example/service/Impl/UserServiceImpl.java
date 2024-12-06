@@ -1,4 +1,4 @@
-package org.example.service.Impl;
+package org.example.service.impl;
 
 
 import org.example.mapper.UserMapper;
