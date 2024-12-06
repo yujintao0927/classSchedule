@@ -3,15 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+    <title>呢喃课表 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'STZhongsong', '华文中宋', 'SimSun', serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
 
-    <title>主页</title>
+        .header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #6c63ff;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #5a52d5;
+        }
+
+        .btn-outline {
+            border: 2px solid #6c63ff;
+            color: #6c63ff;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #6c63ff;
+            color: white;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: #6c63ff;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin: 60px 0;
+            color: #333;
+        }
+
+        .welcome-section h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-section p {
+            font-size: 18px;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .welcome-section {
+                margin: 40px 0;
+            }
+
+            .welcome-section h2 {
+                font-size: 28px;
+            }
+
+            .welcome-section p {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>呢喃课表</h1> <!-- 一级标题 -->
-<h2>亲爱的小蓝鲸，欢迎来到主页</h2> <!-- 二级标题 -->
-<p th:text="'当前用户: ' + ${username}"></p> <!-- 使用Thymeleaf显示动态内容 -->
-<a href="/login">登录</a>
-<a href="/register">注册</a>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>呢喃课表</h1>
+                <p>智能课程管理系统</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="/login" class="btn btn-outline">登录</a>
+                <a href="/register" class="btn btn-primary">注册</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h2>欢迎使用呢喃课表</h2>
+            <p>亲爱的小蓝鲸们，祝愿你们在呢喃课表的帮助下，学习进步，生活愉快！</p>
+        </section>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3 class="feature-title">个性化课表</h3>
+                <p class="feature-description">
+                    清晰展示每周课程安排，让您的学习计划一目了然。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">教室查询</h3>
+                <p class="feature-description">
+                    快速查找空闲教室，方便您找到理想的学习场所。
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">👨‍🏫</div>
+                <h3 class="feature-title">教师课表</h3>
+                <p class="feature-description">
+                    轻松查询教师课程安排，帮助您更好地安排答疑和讨论时间。
+                </p>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
