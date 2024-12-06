@@ -4,7 +4,6 @@ import org.example.pojo.Result;
 import org.example.pojo.Schedule;
 import org.example.service.ClassroomService;
 import org.example.utils.JwtUtils;
-import org.example.utils.spider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,49 +12,57 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/classroom")
 public class ClassroomController {
 
     @Autowired
-    private ClassroomService classroomService ;
+    private ClassroomService classroomService;
 
     @GetMapping("/searchClassroom")
-    public Result<Schedule> searchClassroom(@RequestHeader(name = "Authorization") String token, String classroom, int week, String day, int time) {
+    public Result<List<Schedule>> searchClassroom(
+            @RequestHeader(name = "Authorization") String token,
+            String classroom,
+            Integer week
+    ) {
+        if (classroom == null || classroom.trim().isEmpty()) {
+            return Result.error("教室地点不能为空");
+        }
+        
         try {
-            Map<String, Object> claim = JwtUtils.parseToken(token) ;
-            List<Schedule> schedules = classroomService.searchClassroom(classroom) ;
-
-            for (int i = 0; i < schedules.size(); i++) {
-                String[] info = schedules.get(i).getClassTimeAndLocation().split(" ") ;
-                String realDay = info[0] ;
-
-                int timeStart = Integer.parseInt(String.valueOf(info[1].charAt(0))) ;
-                int timeEnd ;
-                if(info[1].charAt(3) >= '0' && info[1].charAt(3) <= '9') {
-                    timeEnd = Integer.parseInt(info[1].substring(2,4)) ;
-                } else {
-                    timeEnd = Integer.parseInt(String.valueOf(info[1].charAt(2))) ;
-                }
-
-                int weekStart = Integer.parseInt(String.valueOf(info[2].charAt(0))) ;
-                int weekEnd ;
-                if(info[2].charAt(3) >= '0' && info[2].charAt(3) <= '9') {
-                    weekEnd = Integer.parseInt(info[2].substring(2,4)) ;
-                } else {
-                    weekEnd = Integer.parseInt(String.valueOf(info[2].charAt(2))) ;
-                }
-
-                if(week < weekStart || week > weekEnd || !day.equals(realDay) || time < timeStart || time > timeEnd) {
-                } else {
-                    return Result.success(schedules.get(i)) ;
-                }
+            Map<String, Object> claim = JwtUtils.parseToken(token);
+            List<Schedule> schedules = classroomService.searchClassroom(classroom);
+            
+            if (week != null && schedules != null) {
+                schedules = schedules.stream()
+                    .filter(schedule -> {
+                        String timeLocation = schedule.getClassTimeAndLocation();
+                        if (timeLocation == null) return false;
+                        
+                        String[] parts = timeLocation.split(" ");
+                        if (parts.length < 3) return false;
+                        
+                        try {
+                            String weekInfo = parts[2];
+                            int weekStart = Integer.parseInt(String.valueOf(weekInfo.charAt(0)));
+                            int weekEnd;
+                            if (weekInfo.charAt(3) >= '0' && weekInfo.charAt(3) <= '9') {
+                                weekEnd = Integer.parseInt(weekInfo.substring(2, 4));
+                            } else {
+                                weekEnd = Integer.parseInt(String.valueOf(weekInfo.charAt(2)));
+                            }
+                            return week >= weekStart && week <= weekEnd;
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .toList();
             }
-            return Result.success(null) ;
+            
+            return Result.success(schedules);
         } catch (Exception e) {
-            return Result.error("未登录") ;
+            return Result.error("查询失败：" + e.getMessage());
         }
     }
 }

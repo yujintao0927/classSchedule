@@ -18,19 +18,23 @@ import java.util.Map;
 public class TeacherController {
 
     @Autowired
-    private TeacherService teacherService ;
+    private TeacherService teacherService;
 
     @GetMapping("/search")
-    public Result<List<Schedule>> searchByTeacherName(String teacherName,@RequestHeader(name = "Authorization") String token) {
+    public Result<List<Schedule>> searchByTeacherName(
+            String teacherName,
+            @RequestHeader(name = "Authorization") String token
+    ) {
+        if (teacherName == null || teacherName.trim().isEmpty()) {
+            return Result.error("教师姓名不能为空");
+        }
 
-        Map<String, Object> claim = null;
         try {
-            claim = JwtUtils.parseToken(token) ;
-            List<Schedule> schedules =  teacherService.search(teacherName) ;
-
-            return Result.success(schedules) ;
+            Map<String, Object> claim = JwtUtils.parseToken(token);
+            List<Schedule> schedules = teacherService.search(teacherName);
+            return Result.success(schedules);
         } catch (Exception e) {
-            return Result.error("未登录") ;
+            return Result.error("查询失败：" + e.getMessage());
         }
     }
 }
