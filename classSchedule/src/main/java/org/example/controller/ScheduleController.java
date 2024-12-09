@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.example.utils.spider;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-
 @RequestMapping("/schedule")
+@CrossOrigin
 public class ScheduleController {
 
     @Autowired
@@ -23,33 +24,43 @@ public class ScheduleController {
 
     @GetMapping("/addClass")
     public Result addClass(@RequestHeader(name = "Authorization") String token) {
-
+        System.out.println("=== addClass endpoint called ===");
         try {
-            Map<String, Object> claim = JwtUtils.parseToken(token) ;
+            System.out.println("Received token: " + token);
+            Map<String, Object> claim = JwtUtils.parseToken(token);
             String username = (String) claim.get("username");
+            System.out.println("Username: " + username);
 
-            List<String> list = spider.getInfo() ;
-            scheduleService.addClass(username,list) ;
-
-            return Result.success() ;
+            List<String> list = spider.getInfo();
+            System.out.println("Spider info: " + list);
+            
+            scheduleService.addClass(username, list);
+            System.out.println("addClass completed successfully");
+            return Result.success();
         } catch (Exception e) {
-            return Result.error("未登录") ;
+            System.err.println("Error in addClass: " + e.getMessage());
+            e.printStackTrace();
+            return Result.error("导入失败：" + e.getMessage());
         }
     }
 
     @GetMapping("/classShow")
     public Result<List<Schedule>> showClass(@RequestHeader(name = "Authorization") String token) {
         try {
-            Map<String, Object> claim = JwtUtils.parseToken(token) ;
+            Map<String, Object> claim = JwtUtils.parseToken(token);
             String username = (String) claim.get("username");
+            System.out.println("Showing classes for user: " + username);
 
-            List<String> classIds = scheduleService.findClassId(username) ;
+            List<String> classIds = scheduleService.findClassId(username);
+            System.out.println("Found class IDs: " + classIds);
 
-            List<Schedule> schedules = scheduleService.showClass(classIds) ;
+            List<Schedule> schedules = scheduleService.showClass(classIds);
+            System.out.println("Retrieved schedules: " + schedules);
 
-            return Result.success(schedules) ;
+            return Result.success(schedules);
         } catch (Exception e) {
-            return Result.error("未登录") ;
+            e.printStackTrace();
+            return Result.error("未登录");
         }
     }
 }

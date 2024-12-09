@@ -17,7 +17,7 @@ public class PageController {
     }
 
     @GetMapping("/student")
-    public String student() {
+    public String studentPage() {
         return "student";
     }
 
