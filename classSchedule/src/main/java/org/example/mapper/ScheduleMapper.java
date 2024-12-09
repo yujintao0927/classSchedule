@@ -1,5 +1,6 @@
 package org.example.mapper;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -18,4 +19,7 @@ public interface ScheduleMapper {
 
     @Select("select * from class WHERE classId=#{classId}")
     List<Schedule> findClassById(String classId);
+
+    @Delete("DELETE FROM map_user_class WHERE username = #{username}")
+    void deleteUserCourses(String username);
 }

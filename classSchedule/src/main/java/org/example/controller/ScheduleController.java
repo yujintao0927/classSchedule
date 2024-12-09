@@ -4,6 +4,7 @@ import org.example.pojo.Result;
 import org.example.pojo.Schedule;
 import org.example.service.ScheduleService;
 import org.example.utils.JwtUtils;
+import org.example.mapper.ScheduleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,23 +23,27 @@ public class ScheduleController {
     @Autowired
     private ScheduleService scheduleService ;
 
+    @Autowired
+    private ScheduleMapper scheduleMapper;
+
     @GetMapping("/addClass")
     public Result addClass(@RequestHeader(name = "Authorization") String token) {
-        System.out.println("=== addClass endpoint called ===");
         try {
-            System.out.println("Received token: " + token);
             Map<String, Object> claim = JwtUtils.parseToken(token);
             String username = (String) claim.get("username");
-            System.out.println("Username: " + username);
+            System.out.println("正在为用户 " + username + " 导入课程");
 
             List<String> list = spider.getInfo();
-            System.out.println("Spider info: " + list);
+            System.out.println("爬虫获取到的课程ID列表: " + list);
+            
+            // 先清除该用户之前的选课记录
+            scheduleMapper.deleteUserCourses(username);
             
             scheduleService.addClass(username, list);
-            System.out.println("addClass completed successfully");
+            System.out.println("课程导入完成");
+
             return Result.success();
         } catch (Exception e) {
-            System.err.println("Error in addClass: " + e.getMessage());
             e.printStackTrace();
             return Result.error("导入失败：" + e.getMessage());
         }
