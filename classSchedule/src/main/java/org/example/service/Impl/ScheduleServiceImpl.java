@@ -1,4 +1,4 @@
-package org.example.service.impl;
+package org.example.service.Impl;
 
 import org.example.mapper.ScheduleMapper;
 import org.example.pojo.Schedule;
@@ -16,9 +16,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     private ScheduleMapper scheduleMapper;
 
     @Override
-    public void addClass(String username, List<String> list) {
+    public void addClass(String username, List<String[]> list) {
         for(int i = 0 ; i < list.size() ; i++) {
-            scheduleMapper.addClass(username,list.get(i)) ;
+            scheduleMapper.addClass(username,list.get(i)[0], list.get(i)[1], list.get(i)[2]) ;
         }
     }
 
@@ -28,20 +28,50 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<Schedule> showClass(List<String> classIds) {
+    public List<Schedule> showClass_graphDisplay(List<String> classIds, List<String> classTimeAndLocation) {
         List<Schedule> result = new ArrayList<>();
-        
+
         // 获取学生选择的课程信息
-        for (String classId : classIds) {
-            List<Schedule> classSchedules = scheduleMapper.findClassById(classId);
-            for (Schedule schedule : classSchedules) {
-                result.addAll(parseTimeAndLocation(schedule));
+//        for (int i = 0; i < classIds.size(); i++) {
+//            Schedule classSchedules = scheduleMapper.findClassById(classIds.get(i),classTimeAndLocation.get(i));
+//            result.add(classSchedules) ;
+//        }
+//        for (String classId : classIds) {
+//            List<Schedule> classSchedules = scheduleMapper.findClassById(classId);
+//            for (Schedule schedule : classSchedules) {
+//                result.addAll(parseTimeAndLocation(schedule));
+//            }
+//        }
+        for (int i = 0; i < classIds.size(); i++) {
+            List<Schedule> schedule = scheduleMapper.findClassByIdd(classIds.get(i), classTimeAndLocation.get(i));
+            for (Schedule scheduless : schedule) {
+                result.addAll(parseTimeAndLocation(scheduless));
             }
         }
-        
         return result;
     }
-    
+
+    @Override
+    public List<Schedule> showClass_textDisplay(List<String> classId, List<String> classTimeAndLocation, List<String> teacherName) {
+        List<Schedule> result = new ArrayList<>();
+
+        for (int i = 0; i < classId.size(); i++) {
+            Schedule classSchedule = scheduleMapper.findClassById(classId.get(i),classTimeAndLocation.get(i), teacherName.get(i));
+            result.add(classSchedule) ;
+        }
+        return result ;
+    }
+
+    @Override
+    public List<String> findClassTimeAndLocation(String username) {
+        return scheduleMapper.findClassTimeAndLocation(username) ;
+    }
+
+    @Override
+    public List<String> findClassTeacherName(String username) {
+        return scheduleMapper.findClassTeacherName(username) ;
+    }
+
     private List<Schedule> parseTimeAndLocation(Schedule schedule) {
         List<Schedule> schedules = new ArrayList<>();
         String timeAndLocation = schedule.getClassTimeAndLocation();
@@ -63,7 +93,8 @@ public class ScheduleServiceImpl implements ScheduleService {
                 
                 // 设置节次
                 String[] times = parts[1].replace("节", "").split("-");
-                newSchedule.setTime(Integer.parseInt(times[0])); // 取第一节课的时间
+                newSchedule.setTimeStart(Integer.parseInt(times[0])); // 取第一节课的时间
+                newSchedule.setTimeEnd(Integer.parseInt(times[1]));
                 
                 // 设置周次
                 String weekPart = parts[2].replace("周", "");
@@ -130,7 +161,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         clone.setClassTeacher(original.getClassTeacher());
         clone.setClassTimeAndLocation(original.getClassTimeAndLocation());
         clone.setDay(original.getDay());
-        clone.setTime(original.getTime());
+        clone.setTimeStart(original.getTimeStart());
+        clone.setTimeEnd(original.getTimeEnd());
         clone.setClassroom(original.getClassroom());
         return clone;
     }

@@ -371,7 +371,7 @@
 
         async function loadSchedule() {
             try {
-                const response = await fetch('/schedule/classShow', {
+                const response = await fetch('/schedule/allCourses', {
                     headers: {
                         'Authorization': token
                     }
@@ -403,9 +403,9 @@
                     
                     const classesInSlot = schedules.filter(schedule => {
                         console.log("Checking schedule:", schedule, "against week:", currentWeek, "time:", (i + 1), "day:", j);
-                        return schedule.week == currentWeek && 
-                               schedule.time == (i + 1) && 
-                               getDayIndex(schedule.day) == j;
+                        return schedule.week == currentWeek &&
+                            (schedule.timeStart <= (i + 1) && (i+1) <= schedule.timeEnd) &&
+                            getDayIndex(schedule.day) == j;
                     });
                     
                     console.log(`Found ${classesInSlot.length} classes for slot [${i+1}, ${j}]`);
@@ -442,8 +442,9 @@
         }
 
         async function loadAllCourses() {
+            //allCourses
             try {
-                const response = await fetch('/schedule/allCourses', {
+                const response = await fetch('/schedule/classShow', {
                     headers: {
                         'Authorization': token
                     }
@@ -477,8 +478,8 @@
                 info.className = 'course-info';
                 info.innerHTML = `
                     <p>教师：${course.teacherName}</p>
-                    <p>时间：第${course.week}周 ${course.day} 第${course.time}节</p>
-                    <p>地点：${course.classroom}</p>
+                    <!--<p>时间：第${course.week}周 ${course.day} 第${course.time}节</p>-->
+                    <p>时间和地点：${course.classroom}</p>
                     ${course.note ? `<p>备注：${course.note}</p>` : ''}
                 `;
                 

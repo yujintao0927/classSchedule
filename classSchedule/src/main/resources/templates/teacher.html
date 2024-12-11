@@ -382,8 +382,8 @@
                     cell.className = 'schedule-cell';
                     
                     const classesInSlot = schedules.filter(schedule => 
-                        schedule.week == currentWeek && 
-                        schedule.time == (i + 1) && 
+                        schedule.week == currentWeek &&
+                        (schedule.timeStart <= (i + 1) && (i + 1) <= schedule.timeEnd) &&
                         getDayIndex(schedule.day) == j
                     );
                     

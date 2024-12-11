@@ -10,46 +10,55 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class spider {
-    public static List<String> getInfo() {
-        List<String> courseIds = new ArrayList<>();
-        try {
-            String url = "https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do?t_s=1732623207550&amp_sec_version_=1&gid_=djlkWjBnWm92WFdZT2xmd0tLM1JZQVBHMzJ0N0FDQTMzTmFMVnVObEhQNENoanFSaEREYm5KdFFvTEZDN201L3RmUVpVMU90ekhpejRJVEhpMUhNQ3c9PQ&EMAP_LANG=zh&THEME=#/xskcb";
+    public static List<String[]> getInfo () throws Exception {
 
-            WebDriverManager.edgedriver().setup();
-            WebDriver driver = new EdgeDriver();
-            driver.get(url);
+        List<String[]> list = new ArrayList<>();
+        String url = "https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do?t_s=1732623207550&amp_sec_version_=1&gid_=djlkWjBnWm92WFdZT2xmd0tLM1JZQVBHMzJ0N0FDQTMzTmFMVnVObEhQNENoanFSaEREYm5KdFFvTEZDN201L3RmUVpVMU90ekhpejRJVEhpMUhNQ3c9PQ&EMAP_LANG=zh&THEME=#/xskcb";
 
-            // 页面跳转成功
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));  // 设置最大等待时间为 30 秒
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bh-headerBar-title")));
+        WebDriverManager.edgedriver().setup();
+        WebDriver driver = new EdgeDriver();
+        driver.get(url);
 
-            Thread.sleep(3000);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bh-headerBar-title")));
 
-            String currentUrl = driver.getCurrentUrl();
-            if (currentUrl == null) {
-                throw new Exception();
-            }
-            driver.get(currentUrl);
-            WebElement tbody = driver.findElement(By.tagName("tbody"));
-            List<WebElement> rows = tbody.findElements(By.tagName("tr"));
+        Thread.sleep(3000);
 
-            for (WebElement row : rows) {
-                WebElement tdTarget = row.findElements(By.tagName("td")).get(1);
-                WebElement span = tdTarget.findElement(By.tagName("span"));
-                String title = span.getAttribute("title");
-                courseIds.add(title);
-            }
-
-            driver.quit();
-
-            System.out.println("爬取到的原始数据：" + courseIds);
-            System.out.println("处理后的课程ID：" + courseIds);
-        } catch (Exception e) {
-            e.printStackTrace();
+        String currentUrl = driver.getCurrentUrl();
+        if (currentUrl == null) {
+            throw new Exception();
         }
-        return courseIds;
+        driver.get(currentUrl);
+        WebElement tbody = driver.findElement(By.tagName("tbody"));
+        List<WebElement> rows = tbody.findElements(By.tagName("tr"));
+
+        for (WebElement row : rows) {
+
+            WebElement tdTargetNO = row.findElements(By.tagName("td")).get(1);
+            WebElement spanNO = tdTargetNO.findElement(By.tagName("span"));
+            WebElement tdTargetTime = row.findElements(By.tagName("td")).get(6).findElement(By.tagName("span"));
+            WebElement tdTargetTeacher = row.findElements(By.tagName("td")).get(4).findElement(By.tagName("span")) ;
+            String NO = spanNO.getAttribute("title");
+            String time = tdTargetTime.getAttribute("title");
+            String teachername = tdTargetTeacher.getAttribute("title") ;
+            String[] element = {NO, time, teachername};
+            list.add(element);
+        }
+        driver.quit();
+        for (int i = 0; i < list.size(); i++) {
+            String timeAndLocation = list.get(i)[1].replaceAll("\\s+", " ").trim();
+            list.get(i)[1] = timeAndLocation ;
+            if(timeAndLocation.charAt(timeAndLocation.indexOf(",") + 1) == '周' && timeAndLocation.contains(",")) {
+                String[] strings = timeAndLocation.split(",") ;
+                if(strings[0].charAt(1) > strings[1].charAt(1)) {
+                    list.get(i)[1] = strings[1] + "," + strings[0] ;
+                }
+            }
+        }
+        return list;
     }
 }

@@ -362,7 +362,9 @@
                 const result = await response.json();
                 
                 if (result.code === 0) {
-                    displaySchedule(result.data ? [result.data] : []);
+                    // displaySchedule(result.data ? [result.data] : []);
+                    console.log("Schedule data:", result.data);
+                    displaySchedule(result.data)
                 } else {
                     alert(result.message || '查询课表失败');
                 }
@@ -381,11 +383,11 @@
                     const cell = document.createElement('div');
                     cell.className = 'schedule-cell';
                     
-                    const classesInSlot = schedules.filter(schedule => 
-                        schedule.week == currentWeek && 
-                        schedule.time == (i + 1) && 
+                    const classesInSlot = schedules.filter(schedule => {
+                        return schedule.week == currentWeek &&
+                        (schedule.timeStart <= (i + 1) && (i + 1) <= schedule.timeEnd) &&
                         getDayIndex(schedule.day) == j
-                    );
+                    });
                     
                     classesInSlot.forEach(schedule => {
                         const classDiv = document.createElement('div');

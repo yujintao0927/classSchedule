@@ -28,9 +28,10 @@ public class AllCoursesController {
             
             // 获取用户所有的课程ID
             List<String> classIds = scheduleService.findClassId(username);
+            List<String> classTimeAndLocation = scheduleService.findClassTimeAndLocation(username);
             
             // 获取所有课程的详细信息
-            List<Schedule> schedules = scheduleService.showClass(classIds);
+            List<Schedule> schedules = scheduleService.showClass_graphDisplay(classIds,classTimeAndLocation);
             
             return Result.success(schedules);
         } catch (Exception e) {

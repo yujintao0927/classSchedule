@@ -33,8 +33,8 @@ public class ScheduleController {
             String username = (String) claim.get("username");
             System.out.println("正在为用户 " + username + " 导入课程");
 
-            List<String> list = spider.getInfo();
-            System.out.println("爬虫获取到的课程ID列表: " + list);
+            List<String[]> list = spider.getInfo();
+            System.out.println("爬虫获取到的课程ID及时间地点列表: " + list);
             
             // 先清除该用户之前的选课记录
             scheduleMapper.deleteUserCourses(username);
@@ -57,9 +57,13 @@ public class ScheduleController {
             System.out.println("Showing classes for user: " + username);
 
             List<String> classIds = scheduleService.findClassId(username);
-            System.out.println("Found class IDs: " + classIds);
+            List<String> classTimeAndLocation = scheduleService.findClassTimeAndLocation(username);
+            List<String> teacherName = scheduleService.findClassTeacherName(username) ;
 
-            List<Schedule> schedules = scheduleService.showClass(classIds);
+            System.out.println("Found class IDs: " + classIds);
+            System.out.println("Found class TimeAndLocation: " + classTimeAndLocation);
+
+            List<Schedule> schedules = scheduleService.showClass_textDisplay(classIds,classTimeAndLocation,teacherName);
             System.out.println("Retrieved schedules: " + schedules);
 
             return Result.success(schedules);
