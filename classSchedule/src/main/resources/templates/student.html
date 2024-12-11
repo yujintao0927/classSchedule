@@ -96,7 +96,6 @@
         }
 
         .schedule-container {
-            display: flex;
             max-width: 1200px;
             margin: 20px auto;
             background: white;
@@ -105,17 +104,19 @@
             overflow: hidden;
         }
 
-        .time-slots {
-            width: 100px;
-            background: #f8f9fa;
-            border-right: 1px solid #eee;
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);  /* 第一列是时间栏 */
+            background: white;
         }
 
-        .time-slot {
-            height: 100px;
+        .time-cell {
+            background: #f8f9fa;
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+            height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -123,25 +124,29 @@
             color: #666;
         }
 
-        .time-slot span:first-child {
+        .time-cell span:first-child {
             font-weight: bold;
             color: #333;
             margin-bottom: 5px;
         }
 
-        .schedule-grid {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1px;
-            background: #eee;
-        }
-
         .schedule-cell {
             background: white;
-            min-height: 100px;
             padding: 8px;
-            font-size: 13px;
+            height: 120px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+            overflow-y: auto;
+        }
+
+        /* 移除最后一行的底部边框 */
+        .schedule-grid > div:nth-last-child(-n+8) {
+            border-bottom: none;
+        }
+
+        /* 移除每行最后一个单元格的右边框 */
+        .schedule-grid > div:nth-child(8n) {
+            border-right: none;
         }
 
         .class-item {
@@ -282,22 +287,8 @@
     </div>
 
     <div class="schedule-container">
-        <div class="time-slots">
-            <div class="time-slot"><span>第1节</span><span>08:00-08:50</span></div>
-            <div class="time-slot"><span>第2节</span><span>09:00-09:50</span></div>
-            <div class="time-slot"><span>第3节</span><span>10:10-11:00</span></div>
-            <div class="time-slot"><span>第4节</span><span>11:10-12:00</span></div>
-            <div class="time-slot"><span>第5节</span><span>14:00-14:50</span></div>
-            <div class="time-slot"><span>第6节</span><span>15:00-15:50</span></div>
-            <div class="time-slot"><span>第7节</span><span>16:10-17:00</span></div>
-            <div class="time-slot"><span>第8节</span><span>17:10-18:00</span></div>
-            <div class="time-slot"><span>第9节</span><span>18:30-19:20</span></div>
-            <div class="time-slot"><span>第10节</span><span>19:30-20:20</span></div>
-            <div class="time-slot"><span>第11节</span><span>20:30-21:20</span></div>
-        </div>
-
         <div class="schedule-grid" id="schedule-grid">
-            <!-- 课表内容将通过JavaScript动态生成 -->
+            <!-- 整个表格将通过JavaScript动态生成 -->
         </div>
     </div>
 
@@ -328,6 +319,21 @@
         let currentWeek = 1;
         const TOTAL_WEEKS = 20;
         const SEMESTER_START = new Date('2024-09-02'); 
+
+        // 首先定义一个统一的时间配置对象
+        const timeSlots = [
+            { period: 1, time: "08:00-08:50" },
+            { period: 2, time: "09:00-09:50" },
+            { period: 3, time: "10:10-11:00" },
+            { period: 4, time: "11:10-12:00" },
+            { period: 5, time: "14:00-14:50" },
+            { period: 6, time: "15:00-15:50" },
+            { period: 7, time: "16:10-17:00" },
+            { period: 8, time: "17:10-18:00" },
+            { period: 9, time: "18:30-19:20" },
+            { period: 10, time: "19:30-20:20" },
+            { period: 11, time: "20:30-21:20" }
+        ];
 
         function updateDateNav(weekOffset = 0) {
             const startDate = new Date(SEMESTER_START);
@@ -392,23 +398,30 @@
         }
 
         function displaySchedule(schedules) {
-            console.log("Displaying schedules:", schedules);
             const grid = document.getElementById('schedule-grid');
             grid.innerHTML = '';
             
-            for (let i = 0; i < 11; i++) {
+            // 生成所有单元格
+            for (let i = 0; i < timeSlots.length; i++) {
+                // 添加时间单元格
+                const timeCell = document.createElement('div');
+                timeCell.className = 'time-cell';
+                timeCell.innerHTML = `
+                    <span>第${timeSlots[i].period}节</span>
+                    <span>${timeSlots[i].time}</span>
+                `;
+                grid.appendChild(timeCell);
+                
+                // 添加课程单元格
                 for (let j = 0; j < 7; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'schedule-cell';
                     
                     const classesInSlot = schedules.filter(schedule => {
-                        console.log("Checking schedule:", schedule, "against week:", currentWeek, "time:", (i + 1), "day:", j);
                         return schedule.week == currentWeek &&
-                            (schedule.timeStart <= (i + 1) && (i+1) <= schedule.timeEnd) &&
+                            (schedule.timeStart <= timeSlots[i].period && timeSlots[i].period <= schedule.timeEnd) &&
                             getDayIndex(schedule.day) == j;
                     });
-                    
-                    console.log(`Found ${classesInSlot.length} classes for slot [${i+1}, ${j}]`);
                     
                     classesInSlot.forEach(schedule => {
                         const classDiv = document.createElement('div');
@@ -442,7 +455,6 @@
         }
 
         async function loadAllCourses() {
-            //allCourses
             try {
                 const response = await fetch('/schedule/classShow', {
                     headers: {
@@ -451,10 +463,16 @@
                 });
                 const result = await response.json();
                 
+                console.log('服务器返回的数据:', result);
+                
                 if (result.code === 0) {
+                    if (!result.data) {
+                        alert('暂无课程数据');
+                        return;
+                    }
                     displayAllCourses(result.data);
                 } else {
-                    alert(result.message || '加载课程失败');
+                    alert(result.msg || '加载课程失败');
                 }
             } catch (error) {
                 console.error('加载课程失败:', error);
@@ -466,20 +484,26 @@
             const container = document.getElementById('allCoursesList');
             container.innerHTML = '';
             
+            if (!courses || courses.length === 0) {
+                container.innerHTML = '<p>暂无课程数据</p>';
+                return;
+            }
+            
             courses.forEach(course => {
+                if (!course) return;
+                
                 const courseDiv = document.createElement('div');
                 courseDiv.className = 'course-item';
                 
                 const header = document.createElement('div');
                 header.className = 'course-header';
-                header.textContent = `${course.className} [${course.classId}]`;
+                header.textContent = `${course.className || '未知课程'} ${course.classId ? `[${course.classId}]` : ''}`;
                 
                 const info = document.createElement('div');
                 info.className = 'course-info';
                 info.innerHTML = `
-                    <p>教师：${course.teacherName}</p>
-                    <!--<p>时间：第${course.week}周 ${course.day} 第${course.time}节</p>-->
-                    <p>时间和地点：${course.classroom}</p>
+                    <p>教师：${course.teacherName || '未知'}</p>
+                    <p>时间和地点：${course.classroom || '未安排'}</p>
                     ${course.note ? `<p>备注：${course.note}</p>` : ''}
                 `;
                 

@@ -6,6 +6,8 @@ import org.example.service.ScheduleService;
 import org.example.utils.JwtUtils;
 import org.example.mapper.ScheduleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,18 +60,18 @@ public class ScheduleController {
 
             List<String> classIds = scheduleService.findClassId(username);
             List<String> classTimeAndLocation = scheduleService.findClassTimeAndLocation(username);
-            List<String> teacherName = scheduleService.findClassTeacherName(username) ;
+            List<String> teacherName = scheduleService.findClassTeacherName(username);
 
             System.out.println("Found class IDs: " + classIds);
             System.out.println("Found class TimeAndLocation: " + classTimeAndLocation);
 
-            List<Schedule> schedules = scheduleService.showClass_textDisplay(classIds,classTimeAndLocation,teacherName);
+            List<Schedule> schedules = scheduleService.showClass_textDisplay(classIds, classTimeAndLocation, teacherName);
             System.out.println("Retrieved schedules: " + schedules);
 
             return Result.success(schedules);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error("未登录");
+            return Result.error("加载课程失败：" + e.getMessage());
         }
     }
 }
