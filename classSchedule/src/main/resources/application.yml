@@ -9,3 +9,6 @@ spring:
   application:
     name: App
 
+server:
+  servlet:
+    context-path=:

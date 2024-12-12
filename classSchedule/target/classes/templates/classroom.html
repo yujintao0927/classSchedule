@@ -274,8 +274,8 @@
     </div>
 
     <div class="footer-nav">
-        <a href="/student">学生课表</a>
-        <a href="/teacher">教师课表</a>
+        <a href="student">学生课表</a>
+        <a href="teacher">教师课表</a>
     </div>
 
     <script>
@@ -283,7 +283,7 @@
         const token = localStorage.getItem('token');
         if (!token) {
             alert('请先登录');
-            window.location.href = '/login';
+            window.location.href = 'login';
         }
 
         let currentWeek = 1;
@@ -358,7 +358,7 @@
             currentClassroom = classroom;
 
             try {
-                const response = await fetch(`/classroom/searchClassroom?classroom=${encodeURIComponent(classroom)}&week=${currentWeek}`, {
+                const response = await fetch(`classroom/searchClassroom?classroom=${encodeURIComponent(classroom)}&week=${currentWeek}`, {
                     headers: {
                         'Authorization': token
                     }

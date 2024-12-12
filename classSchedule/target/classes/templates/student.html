@@ -293,8 +293,8 @@
     </div>
 
     <div class="footer-nav">
-        <a href="/classroom">教室课表</a>
-        <a href="/teacher">教师课表</a>
+        <a href="classroom">教室课表</a>
+        <a href="teacher">教师课表</a>
     </div>
 
     <!-- 全部课程弹窗 -->
@@ -313,7 +313,7 @@
         const token = localStorage.getItem('token');
         if (!token) {
             alert('请先登录');
-            window.location.href = '/login';
+            window.location.href = 'login';
         }
 
         let currentWeek = 1;
@@ -377,7 +377,7 @@
 
         async function loadSchedule() {
             try {
-                const response = await fetch('/schedule/allCourses', {
+                const response = await fetch('schedule/allCourses', {
                     headers: {
                         'Authorization': token
                     }
@@ -456,7 +456,7 @@
 
         async function loadAllCourses() {
             try {
-                const response = await fetch('/schedule/classShow', {
+                const response = await fetch('schedule/classShow', {
                     headers: {
                         'Authorization': token
                     }
@@ -546,7 +546,7 @@
                 console.log("Sending request to /schedule/addClass");
                 
                 $.ajax({
-                    url: '/schedule/addClass',  // 这个路径是正确的
+                    url: 'schedule/addClass',  // 这个路径是正确的
                     type: 'GET',
                     headers: {
                         'Authorization': token,

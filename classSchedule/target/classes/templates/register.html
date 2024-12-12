@@ -155,7 +155,7 @@
         </form>
 
         <div class="footer">
-            <a href="/login">已有账号？立即登录</a>
+            <a href="login">已有账号？立即登录</a>
         </div>
     </div>
 
@@ -171,7 +171,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('/user/register', {
+                const response = await fetch('user/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -188,7 +188,7 @@
                     successMessage.textContent = '注册成功！即将跳转到主页...';
                     successMessage.style.display = 'block';
                     setTimeout(() => {
-                        window.location.href = '/';
+                        window.location.href = '';
                     }, 2000);
                 }
             } catch (error) {
