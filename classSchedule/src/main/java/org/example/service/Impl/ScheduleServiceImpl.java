@@ -1,4 +1,4 @@
-package org.example.service.impl;
+package org.example.service.Impl;
 
 import org.example.mapper.ScheduleMapper;
 import org.example.pojo.Schedule;
@@ -18,58 +18,27 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void addClass(String username, List<String[]> list) {
         for(int i = 0 ; i < list.size() ; i++) {
-            scheduleMapper.addClass(username,list.get(i)[0], list.get(i)[1], list.get(i)[2]) ;
+            Schedule schedule = scheduleMapper.findClassFromClass(list.get(i)[0], list.get(i)[1], list.get(i)[2]) ;
+            scheduleMapper.addClass(username,schedule.getClassId(),schedule.getClassTimeAndLocation(),schedule.getTeacherName(),schedule.getClassPoint(),schedule.getClassName()) ;
         }
     }
 
     @Override
-    public List<String> findClassId(String username) {
-        return scheduleMapper.findClassId(username) ;
-    }
-
-    @Override
-    public List<Schedule> showClass_graphDisplay(List<String> classIds, List<String> classTimeAndLocation) {
+    public List<Schedule> showClass_graphDisplay(String username) {
         List<Schedule> result = new ArrayList<>();
 
-        // 获取学生选择的课程信息
-//        for (int i = 0; i < classIds.size(); i++) {
-//            Schedule classSchedules = scheduleMapper.findClassById(classIds.get(i),classTimeAndLocation.get(i));
-//            result.add(classSchedules) ;
-//        }
-//        for (String classId : classIds) {
-//            List<Schedule> classSchedules = scheduleMapper.findClassById(classId);
-//            for (Schedule schedule : classSchedules) {
-//                result.addAll(parseTimeAndLocation(schedule));
-//            }
-//        }
-        for (int i = 0; i < classIds.size(); i++) {
-            List<Schedule> schedule = scheduleMapper.findClassByIdd(classIds.get(i), classTimeAndLocation.get(i));
-            for (Schedule scheduless : schedule) {
-                result.addAll(parseTimeAndLocation(scheduless));
-            }
+        List<Schedule> schedules = scheduleMapper.findClassFromMap(username) ;
+
+        for (Schedule schedule : schedules) {
+            result.addAll(parseTimeAndLocation(schedule));
         }
+
         return result;
     }
 
     @Override
-    public List<Schedule> showClass_textDisplay(List<String> classId, List<String> classTimeAndLocation, List<String> teacherName) {
-        List<Schedule> result = new ArrayList<>();
-
-        for (int i = 0; i < classId.size(); i++) {
-            Schedule classSchedule = scheduleMapper.findClassById(classId.get(i),classTimeAndLocation.get(i), teacherName.get(i));
-            result.add(classSchedule) ;
-        }
-        return result ;
-    }
-
-    @Override
-    public List<String> findClassTimeAndLocation(String username) {
-        return scheduleMapper.findClassTimeAndLocation(username) ;
-    }
-
-    @Override
-    public List<String> findClassTeacherName(String username) {
-        return scheduleMapper.findClassTeacherName(username) ;
+    public List<Schedule> showClass_textDisplay(String userName) {
+        return scheduleMapper.findClassFromMap(userName);
     }
 
     private List<Schedule> parseTimeAndLocation(Schedule schedule) {

@@ -58,14 +58,7 @@ public class ScheduleController {
             String username = (String) claim.get("username");
             System.out.println("Showing classes for user: " + username);
 
-            List<String> classIds = scheduleService.findClassId(username);
-            List<String> classTimeAndLocation = scheduleService.findClassTimeAndLocation(username);
-            List<String> teacherName = scheduleService.findClassTeacherName(username);
-
-            System.out.println("Found class IDs: " + classIds);
-            System.out.println("Found class TimeAndLocation: " + classTimeAndLocation);
-
-            List<Schedule> schedules = scheduleService.showClass_textDisplay(classIds, classTimeAndLocation, teacherName);
+            List<Schedule> schedules = scheduleService.showClass_textDisplay(username);
             System.out.println("Retrieved schedules: " + schedules);
 
             return Result.success(schedules);

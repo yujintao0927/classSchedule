@@ -9,13 +9,8 @@ import java.util.List;
 public interface ScheduleService {
     void addClass(String username, List<String[]> list) ;
 
-    List<String> findClassId(String username);
+    List<Schedule> showClass_graphDisplay(String username);
 
-    List<Schedule> showClass_graphDisplay(List<String> classId, List<String> classTimeAndLocation);
+    List<Schedule> showClass_textDisplay(String username) ;
 
-    List<Schedule> showClass_textDisplay(List<String> classId, List<String> classTimeAndLocation, List<String> teacherName) ;
-
-    List<String> findClassTimeAndLocation(String username);
-
-    List<String> findClassTeacherName(String username);
 }

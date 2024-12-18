@@ -1,4 +1,4 @@
-package org.example.service.impl;
+package org.example.service.Impl;
 
 import org.example.mapper.TeacherMapper;
 import org.example.pojo.Schedule;
