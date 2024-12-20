@@ -8,22 +8,32 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class spider {
+
+    private static WebDriver driver;
+
+    private static final String url = "https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do?t_s=1732623207550&amp_sec_version_=1&gid_=djlkWjBnWm92WFdZT2xmd0tLM1JZQVBHMzJ0N0FDQTMzTmFMVnVObEhQNENoanFSaEREYm5KdFFvTEZDN201L3RmUVpVMU90ekhpejRJVEhpMUhNQ3c9PQ&EMAP_LANG=zh&THEME=#/xskcb";
     public static List<String[]> getInfo () throws Exception {
 
         List<String[]> list = new ArrayList<>();
-        String url = "https://ehallapp.nju.edu.cn/jwapp/sys/wdkb/*default/index.do?t_s=1732623207550&amp_sec_version_=1&gid_=djlkWjBnWm92WFdZT2xmd0tLM1JZQVBHMzJ0N0FDQTMzTmFMVnVObEhQNENoanFSaEREYm5KdFFvTEZDN201L3RmUVpVMU90ekhpejRJVEhpMUhNQ3c9PQ&EMAP_LANG=zh&THEME=#/xskcb";
-
-        WebDriverManager.edgedriver().setup();
-        WebDriver driver = new EdgeDriver();
-        driver.get(url);
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("bh-headerBar-title")));
 
         Thread.sleep(3000);
@@ -61,4 +71,61 @@ public class spider {
         }
         return list;
     }
+
+
+    public static String getQRCode() {
+
+
+
+        WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(30));
+        WebElement qrImage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("qr_img")));
+
+        try {
+            return downloadImage(qrImage.getAttribute("src"));
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static String downloadImage(String imageUrl) throws IOException {
+        // 创建保存文件夹（如果不存在）
+        String savePath = "../images";//todo 要把服务器上的绝对地址加过来
+        Path folderPath = Paths.get(savePath);
+        System.out.println(folderPath);
+        if (!Files.exists(folderPath)) {
+            Files.createDirectories(folderPath);
+        }
+
+        // 连接并下载图片
+        URL url = new URL(imageUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(10000); // 超时时间
+        connection.setReadTimeout(10000);
+
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = "qr_code_" + timestamp + ".png";
+
+        String pathSeparator = FileSystems.getDefault().getSeparator();
+        try (InputStream inputStream = connection.getInputStream(); FileOutputStream outputStream = new FileOutputStream(savePath + pathSeparator + fileName)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+//            System.out.println("图片保存成功：" + savePath + "/" + fileName);
+        } finally {
+            connection.disconnect();
+        }
+        return savePath + fileName;
+    }
+    public static void initialization(){
+        WebDriverManager.edgedriver().setup();
+        driver = new EdgeDriver();
+        driver.get(url);
+    }
+
+
 }

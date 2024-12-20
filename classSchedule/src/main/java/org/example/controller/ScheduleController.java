@@ -28,6 +28,7 @@ public class ScheduleController {
     @Autowired
     private ScheduleMapper scheduleMapper;
 
+    String QRCode ;
     @GetMapping("/addClass")
     public Result addClass(@RequestHeader(name = "Authorization") String token) {
         try {
@@ -35,12 +36,18 @@ public class ScheduleController {
             String username = (String) claim.get("username");
             System.out.println("正在为用户 " + username + " 导入课程");
 
+            spider.initialization();
+            QRCode = spider.getQRCode() ;
+            System.out.println(QRCode);
             List<String[]> list = spider.getInfo();
             System.out.println("爬虫获取到的课程ID及时间地点列表: " + list);
-            
+
+            if(list.isEmpty()) {
+                return Result.error("未导入成功") ;
+            }
             // 先清除该用户之前的选课记录
             scheduleMapper.deleteUserCourses(username);
-            
+
             scheduleService.addClass(username, list);
             System.out.println("课程导入完成");
 
@@ -67,4 +74,18 @@ public class ScheduleController {
             return Result.error("加载课程失败：" + e.getMessage());
         }
     }
+
+    @GetMapping("/QRCode")
+    public Result<String> getQRCode(@RequestHeader(name = "Authorization") String token) {
+        try {
+            Map<String, Object> claim = JwtUtils.parseToken(token);
+
+            return Result.success(QRCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("加载课程失败：" + e.getMessage());
+        }
+    }
+
+
 }
