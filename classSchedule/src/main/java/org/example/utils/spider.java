@@ -91,7 +91,7 @@ public class spider {
 
     private static String downloadImage(String imageUrl) throws IOException {
         // 创建保存文件夹（如果不存在）
-        String savePath = "../images";//todo 要把服务器上的绝对地址加过来
+        String savePath = ".\\classSchedule\\src\\main\\java\\org\\example\\images";//todo 要把服务器上的绝对地址加过来
         Path folderPath = Paths.get(savePath);
         System.out.println(folderPath);
         if (!Files.exists(folderPath)) {
