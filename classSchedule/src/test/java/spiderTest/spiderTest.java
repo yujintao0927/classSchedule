@@ -1,17 +1,18 @@
-package spider;
+package spiderTest;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.example.utils.spider;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.annotation.Target;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class spiderTest {
     @Test
@@ -43,5 +44,14 @@ public class spiderTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void delete() {
+        String projectPath = System.getProperty("user.dir");
+        String savePath = projectPath + "/classSchedule/src/main/java/org/example/images";
+        Path folderPath = Paths.get(savePath);
+        spider.deleteImage(folderPath + "/" + "qr_code_20241222_013443.png") ;
+//        spider.deleteImage("D:\\classSchedule\\classSchedule\\src\\main\\java\\org\\example\\images\\qr_code_20241222_002723.png") ;
     }
 }

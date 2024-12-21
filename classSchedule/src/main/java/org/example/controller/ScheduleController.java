@@ -28,6 +28,7 @@ public class ScheduleController {
     @Autowired
     private ScheduleMapper scheduleMapper;
 
+    String s ;
     @GetMapping("/importProcess")
     public Result<String> importProcess(@RequestHeader(name = "Authorization") String token) {
         try {
@@ -37,6 +38,7 @@ public class ScheduleController {
 
             spider.initialization();
             String qrCodePath = spider.getQRCode();
+            s = qrCodePath ;
             System.out.println("importProcess: 获取到二维码路径: " + qrCodePath);
             if (qrCodePath == null) {
                 System.out.println("importProcess: 二维码路径为空");
@@ -74,6 +76,9 @@ public class ScheduleController {
             scheduleService.addClass(username, list);
             System.out.println("addClass: 课程导入完成");
 
+//            String projectPath = System.getProperty("user.dir");
+            String savePath = "./classSchedule/src/main/java/org/example/images";
+            spider.deleteImage(savePath + "/" + s.split("/")[2]) ;
             return Result.success();
         } catch (Exception e) {
             System.out.println("addClass: 发生异常 - " + e.getMessage());

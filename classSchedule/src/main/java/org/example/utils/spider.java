@@ -8,6 +8,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,7 +109,9 @@ public class spider {
     private static String downloadImage(String imageUrl) throws IOException {
         // 获取项目根目录
         String projectPath = System.getProperty("user.dir");
-        String savePath = projectPath + "/classSchedule/classSchedule/src/main/java/org/example/images";
+        System.out.println(projectPath);
+//        String savePath = projectPath + "/classSchedule/classSchedule/src/main/java/org/example/images";
+        String savePath = ".\\classSchedule\\src\\main\\java\\org\\example\\images";
         Path folderPath = Paths.get(savePath);
         System.out.println("图片保存路径: " + folderPath);
         if (!Files.exists(folderPath)) {
@@ -137,7 +140,11 @@ public class spider {
             connection.disconnect();
         }
         // 返回实际文件路径
-        return "/qrcode/" + fileName;  // 返回Web访问路径
+        //如果部署在服务器上
+        return "/classSchedule/qrcode/" + fileName;  // 返回Web访问路径
+
+        //如果在本地运行
+//        return "/qrcode/" + fileName;
     }
     public static void initialization(){
         System.out.println("initialization: 开始初始化");
@@ -149,6 +156,17 @@ public class spider {
         System.out.println("initialization: 已导航到目标URL");
     }
 
+    public static boolean deleteImage(String sPath) {
+        boolean flag = false;
+        File file = new File(sPath);
+        // 路径为文件且不为空则进行删除
+        if (file.isFile() && file.exists()) {
+            file.delete();
+            flag = true;
+        }
+        return flag;
+
+    }
     public static boolean isLoggedIn() {
         return loggedIn;
     }

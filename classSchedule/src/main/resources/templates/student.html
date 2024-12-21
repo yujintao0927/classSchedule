@@ -596,7 +596,7 @@
 
         function importCourse() {
             console.log("开始导入课程流程 - 获取二维码");
-            axios.get('/schedule/importProcess', {
+            axios.get('schedule/importProcess', {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
@@ -639,7 +639,7 @@
             const maxAttempts = 60;
 
             loginCheckInterval = setInterval(() => {
-                axios.get('/schedule/checkLoginStatus', {
+                axios.get('schedule/checkLoginStatus', {
                     headers: {
                         'Authorization': localStorage.getItem('token')
                     }
@@ -673,7 +673,7 @@
 
         function callAddClass() {
             console.log("开始调用添加课程接口");
-            axios.get('/schedule/addClass', {
+            axios.get('schedule/addClass', {
                 headers: {
                     'Authorization': localStorage.getItem('token')
                 }
