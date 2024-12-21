@@ -28,18 +28,12 @@ public class ScheduleController {
     @Autowired
     private ScheduleMapper scheduleMapper;
 
-    String QRCode ;
     @GetMapping("/addClass")
     public Result addClass(@RequestHeader(name = "Authorization") String token) {
         try {
             Map<String, Object> claim = JwtUtils.parseToken(token);
             String username = (String) claim.get("username");
             System.out.println("正在为用户 " + username + " 导入课程");
-
-            spider.initialization();
-//            调试用，实际需要前端循环调用该函数，如果不为null，则返回二维码，为null，继续循环
-//            QRCode = spider.getQRCode() ;
-//            System.out.println(QRCode);
 
             List<String[]> list = spider.getInfo();
             System.out.println("爬虫获取到的课程ID及时间地点列表: " + list);
@@ -82,7 +76,8 @@ public class ScheduleController {
         try {
             Map<String, Object> claim = JwtUtils.parseToken(token);
 
-            return Result.success(QRCode);
+            spider.initialization();
+            return Result.success(spider.getQRCode());
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("加载课程失败：" + e.getMessage());
