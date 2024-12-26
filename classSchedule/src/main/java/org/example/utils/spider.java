@@ -139,12 +139,12 @@ public class spider {
         } finally {
             connection.disconnect();
         }
-        // 返回实际文件路径
-        //如果部署在服务器上
-        return "/classSchedule/qrcode/" + fileName;  // 返回Web访问路径
+//        // 返回实际文件路径
+//        //如果部署在服务器上
+//        return "/classSchedule/qrcode/" + fileName;  // 返回Web访问路径
 
         //如果在本地运行
-//        return "/qrcode/" + fileName;
+        return "/qrcode/" + fileName;
     }
     public static void initialization(){
         System.out.println("initialization: 开始初始化");
