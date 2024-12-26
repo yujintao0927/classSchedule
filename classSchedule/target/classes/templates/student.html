@@ -139,12 +139,12 @@
             overflow-y: auto;
         }
 
-        /* 移除最后一行的底部边框 */
+
         .schedule-grid > div:nth-last-child(-n+8) {
             border-bottom: none;
         }
 
-        /* 移除每行最后一个单元格的右边框 */
+
         .schedule-grid > div:nth-child(8n) {
             border-right: none;
         }
@@ -201,7 +201,7 @@
             color: #6c63ff;
         }
 
-        /* 全部课程弹窗样式 */
+
         .all-courses-container {
             position: fixed;
             top: 0;
@@ -342,7 +342,7 @@
         const TOTAL_WEEKS = 20;
         const SEMESTER_START = new Date('2024-09-02'); 
 
-        // 首先定义一个统一的时间配置对象
+
         const timeSlots = [
             { period: 1, time: "08:00-08:50" },
             { period: 2, time: "09:00-09:50" },
@@ -399,7 +399,7 @@
 
         async function loadSchedule() {
             try {
-                // 先检查是否有课表数据
+
                 const checkResponse = await axios.get('schedule/classShow', {
                     headers: {
                         'Authorization': token
@@ -407,7 +407,7 @@
                 });
                 
                 if (checkResponse.data.code === 0 && checkResponse.data.data && checkResponse.data.data.length > 0) {
-                    // 有课表数据，则加载课表
+
                     const response = await axios.get('schedule/allCourses', {
                         headers: {
                             'Authorization': token
@@ -424,7 +424,7 @@
                     }
                 } else {
                     console.log("No schedule data available");
-                    // 显示空课表或提示信息
+
                     displayEmptySchedule();
                 }
             } catch (error) {
@@ -437,9 +437,9 @@
             const grid = document.getElementById('schedule-grid');
             grid.innerHTML = '';
             
-            // 生成所有单元格
+
             for (let i = 0; i < timeSlots.length; i++) {
-                // 添加时间单元格
+
                 const timeCell = document.createElement('div');
                 timeCell.className = 'time-cell';
                 timeCell.innerHTML = `
@@ -448,7 +448,7 @@
                 `;
                 grid.appendChild(timeCell);
                 
-                // 添加课程单元格
+
                 for (let j = 0; j < 7; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'schedule-cell';
@@ -485,9 +485,9 @@
             const grid = document.getElementById('schedule-grid');
             grid.innerHTML = '';
             
-            // 生成时间列
+
             timeSlots.forEach(slot => {
-                // 添加时间单元格
+
                 const timeCell = document.createElement('div');
                 timeCell.className = 'time-cell';
                 timeCell.innerHTML = `
@@ -496,7 +496,7 @@
                 `;
                 grid.appendChild(timeCell);
                 
-                // 添加7个空的课程单元格
+
                 for (let i = 0; i < 7; i++) {
                     const cell = document.createElement('div');
                     cell.className = 'schedule-cell';
@@ -649,13 +649,13 @@
                     console.log(`第${attempts}次检查登录状态:`, response.data);
                     
                     if (response.data.code === 0 && response.data.data === true) {
-                        // 登录成功
+
                         clearInterval(loginCheckInterval);
                         document.getElementById('loginStatus').innerHTML = '登录成功！正在导入课程...';
-                        // 调用导入课程接口
+
                         callAddClass();
                     } else if (attempts >= maxAttempts) {
-                        // 超时处理
+
                         clearInterval(loginCheckInterval);
                         document.getElementById('loginStatus').innerHTML = '登录超时，请重试';
                         setTimeout(() => {
@@ -683,7 +683,7 @@
                     document.getElementById('loginStatus').innerHTML = '课程导入成功！';
                     setTimeout(() => {
                         $('#qrCodeModal').modal('hide');
-                        loadSchedule(); // 刷新课程列表
+                        loadSchedule();
                     }, 2000);
                 } else {
                     document.getElementById('loginStatus').innerHTML = '课程导入失败：' + response.data.msg;
@@ -695,7 +695,7 @@
             });
         }
 
-        // 确保在模态框关闭时清除定时器
+
         $('#qrCodeModal').on('hidden.bs.modal', function () {
             if (loginCheckInterval) {
                 clearInterval(loginCheckInterval);
