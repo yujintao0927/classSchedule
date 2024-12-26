@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
+//用于产生token，以及验证token
 public class JwtUtils {
 
     private static final String KEY = "yujintao" ;
